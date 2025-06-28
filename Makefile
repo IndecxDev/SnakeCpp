@@ -19,12 +19,12 @@ DEPS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.d,$(SRCS))
 all: debug
 
 # Build for debugging (default)
-debug: MODE_FLAGS = -g # Add debug symbols
+debug: MODE_FLAGS = -g
 debug: $(BUILDDIR) $(TARGET)
 	@echo "--- Build complete (Debug) ---"
 
 # Build for release (optimized)
-release: MODE_FLAGS = -O2 # Optimize for speed
+release: MODE_FLAGS = -O2
 release: $(BUILDDIR) $(TARGET)
 	@echo "--- Build complete (Release) ---"
 

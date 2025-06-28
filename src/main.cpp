@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "../include/settings.h"
-#include "snake.cpp"
+#include "../include/snake.h"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Window", sf::Style::Close);
@@ -51,8 +51,6 @@ int main() {
         if (msSnakeTimer >= snake.getInterval()) {
             msSnakeTimer = 0;
             snake.Step();
-            snake.setInterval(snake.getInterval() - 1);
-            
         }
 
         snake.Draw(window);
