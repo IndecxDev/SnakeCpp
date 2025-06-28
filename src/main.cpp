@@ -1,11 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+#include "../include/settings.h"
+#include "snake.cpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Window");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Window", sf::Style::Close);
+    window.setFramerateLimit(60);
+    sf::Clock clock;
 
-    int x = 0;
-    sf::CircleShape circle(50);
-    circle.setFillColor(sf::Color::Green);
+    int msSnakeTimer = 0;
+    Snake snake{SNAKE_START_X, SNAKE_START_Y, SNAKE_START_LENGTH, SNAKE_START_INTERVAL};
 
     while (window.isOpen()) {
         sf::Event event;
@@ -14,21 +19,43 @@ int main() {
                 window.close();
             }
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) {
-                    window.close();
+                switch (event.key.code)
+                {
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+                    case sf::Keyboard::Right:
+                        snake.Turn(Direction::Right);
+                        break;
+                    case sf::Keyboard::Left:
+                        snake.Turn(Direction::Left);
+                        break;
+                    case sf::Keyboard::Up:
+                        snake.Turn(Direction::Up);
+                        break;
+                    case sf::Keyboard::Down:
+                        snake.Turn(Direction::Down);
+                        break;
+                    default:
+                    break;
                 }
-                if (event.key.code == sf::Keyboard::Enter) {
-                    circle.setPosition(x, 0);
-                    x += 50;
-                    
-                }
+                
             }
         }
 
         window.clear(sf::Color::Black);
+        
+        int dt = clock.restart().asMilliseconds();
+        msSnakeTimer += dt;
 
-        window.draw(circle);
+        if (msSnakeTimer >= snake.getInterval()) {
+            msSnakeTimer = 0;
+            snake.Step();
+            snake.setInterval(snake.getInterval() - 1);
+            
+        }
 
+        snake.Draw(window);
         window.display();
     }
 }
