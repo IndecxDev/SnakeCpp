@@ -1,9 +1,7 @@
-#ifndef SNAKE_CPP
-#define SNAKE_CPP
-
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "../include/snake.h"
 #include "../include/settings.h"
@@ -18,8 +16,8 @@ void Snake::UpdateSegmentPositions() {
     }
 }
 
-Snake::Snake(const int startX, const int startY, const int startLength, const int startInterval)
-    : direction_(Direction::Up), interval_(startInterval), length_(startLength) {
+Snake::Snake(int startX, int startY, int startLength)
+    : direction_(Direction::Up), length_(startLength), speed_(-1) {
     for (int i = 0; i < length_; i++) {
         sf::RectangleShape shape;
         int gridPosX = startX;
@@ -34,6 +32,7 @@ Snake::Snake(const int startX, const int startY, const int startLength, const in
         seg.position_.y = gridPosY;
         body_.push_back(seg);
     }
+    Snake::SpeedUp();
     UpdateSegmentPositions();
 }
 
@@ -53,6 +52,7 @@ void Snake::Step() {
             dir = {1, 0};
             break;
     }
+
     sf::Vector2i prevPos = body_[0].position_;
     body_[0].position_ += dir;
     for (int i = 1; i < length_; i++) {
@@ -60,6 +60,7 @@ void Snake::Step() {
         body_[i].position_ = prevPos;
         prevPos = currPos;
     }
+
     UpdateSegmentPositions();
 }
 
@@ -67,14 +68,21 @@ void Snake::Turn(Direction dir) {
     direction_ = dir;
 }
 
-int Snake::getInterval() {
+int Snake::GetInterval() {
     return interval_;
 }
 
-void Snake::setInterval(int interval) {
+void Snake::SetInterval(int interval) {
     if (interval > 0) {
         interval_ = interval;
     }
+}
+
+void Snake::SpeedUp() {
+    int newInterval = std::max((int)std::ceil(std::pow(0.96, speed_ - 150)), 50);
+    std::cout << interval_ << " -> " << newInterval << std::endl;
+    speed_++;
+    interval_ = newInterval;
 }
 
 void Snake::Draw(sf::RenderWindow& window) {
@@ -82,5 +90,3 @@ void Snake::Draw(sf::RenderWindow& window) {
         window.draw(seg.shape_);
     }
 }
-
-#endif

@@ -10,7 +10,9 @@ int main() {
     sf::Clock clock;
 
     int msSnakeTimer = 0;
-    Snake snake{SNAKE_START_X, SNAKE_START_Y, SNAKE_START_LENGTH, SNAKE_START_INTERVAL};
+    int msSnakeSpeedUpTimer = 0;
+
+    Snake snake{SNAKE_START_X, SNAKE_START_Y, SNAKE_START_LENGTH};
 
     while (window.isOpen()) {
         sf::Event event;
@@ -47,10 +49,16 @@ int main() {
         
         int dt = clock.restart().asMilliseconds();
         msSnakeTimer += dt;
+        msSnakeSpeedUpTimer += dt;
 
-        if (msSnakeTimer >= snake.getInterval()) {
+        if (msSnakeTimer >= snake.GetInterval()) {
             msSnakeTimer = 0;
             snake.Step();
+        }
+
+        if (msSnakeSpeedUpTimer >= SNAKE_SPEED_UP_INTERVAL) {
+            msSnakeSpeedUpTimer = 0;
+            snake.SpeedUp();
         }
 
         snake.Draw(window);

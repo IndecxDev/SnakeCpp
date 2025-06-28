@@ -11,6 +11,6 @@ inline constexpr int GRID_HEIGHT          = WINDOW_HEIGHT / GRID_TILE_SIZE;
 inline constexpr int SNAKE_START_X        = GRID_WIDTH / 2;
 inline constexpr int SNAKE_START_Y        = GRID_HEIGHT / 2;
 inline constexpr int SNAKE_START_LENGTH   = 8;
-inline constexpr int SNAKE_START_INTERVAL = 100; // Starting time interval in ms between snake steps
+inline constexpr int SNAKE_SPEED_UP_INTERVAL = 3000;
 
 #endif

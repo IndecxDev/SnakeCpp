@@ -14,14 +14,16 @@ private:
     Direction direction_;
     int interval_;
     int length_;
+    int speed_;
 
     void UpdateSegmentPositions();
 public:
-    Snake(const int startX, const int startY, const int startLength, const int startInterval);
+    Snake(int startX, int startY, int startLength);
     void Step();
     void Turn(Direction dir);
-    int getInterval();
-    void setInterval(int interval);
+    int GetInterval();
+    void SetInterval(int interval);
+    void SpeedUp();
     void Draw(sf::RenderWindow& window);
 };
 
