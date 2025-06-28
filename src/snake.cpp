@@ -1,20 +1,9 @@
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <iostream>
 #include <cmath>
 
 #include "../include/snake.h"
 #include "../include/settings.h"
-
-void Snake::UpdateSegmentPositions() {
-    for (SnakeSegment& seg : body_) {
-        if (seg.position_.x < 0) { seg.position_.x += GRID_WIDTH; }
-        if (seg.position_.y < 0) { seg.position_.y += GRID_HEIGHT; }
-        if (seg.position_.x >= GRID_WIDTH) { seg.position_.x = 0; }
-        if (seg.position_.y >= GRID_HEIGHT) { seg.position_.y = 0; }
-        seg.shape_.setPosition(seg.position_.x * GRID_TILE_SIZE, seg.position_.y * GRID_TILE_SIZE);
-    }
-}
 
 Snake::Snake(int startX, int startY, int startLength)
     : direction_(Direction::Up), length_(startLength), speed_(-1) {
@@ -24,7 +13,7 @@ Snake::Snake(int startX, int startY, int startLength)
         int gridPosY = startY + i;
 
         shape.setFillColor(sf::Color::Green);
-        shape.setSize(sf::Vector2f(GRID_TILE_SIZE, GRID_TILE_SIZE));
+        shape.setSize(sf::Vector2f(GRID_TILE_SIZE - SNAKE_TEXTURE_MARGIN, GRID_TILE_SIZE - SNAKE_TEXTURE_MARGIN));
 
         SnakeSegment seg;
         seg.shape_ = shape;
@@ -36,21 +25,42 @@ Snake::Snake(int startX, int startY, int startLength)
     UpdateSegmentPositions();
 }
 
+void Snake::UpdateSegmentPositions() {
+    for (SnakeSegment& seg : body_) {
+        if (seg.position_.x < 0) { seg.position_.x += GRID_WIDTH; }
+        if (seg.position_.y < 0) { seg.position_.y += GRID_HEIGHT; }
+        if (seg.position_.x >= GRID_WIDTH) { seg.position_.x = 0; }
+        if (seg.position_.y >= GRID_HEIGHT) { seg.position_.y = 0; }
+        seg.shape_.setPosition(seg.position_.x * GRID_TILE_SIZE + SNAKE_TEXTURE_MARGIN / 2, seg.position_.y * GRID_TILE_SIZE + SNAKE_TEXTURE_MARGIN / 2);
+    }
+}
+
 void Snake::Step() {
     sf::Vector2i dir;
-    switch (direction_) {
-        case Direction::Up:
-            dir = {0, -1};
-            break;
-        case Direction::Down:
-            dir = {0, 1};
-            break;
-        case Direction::Left:
-            dir = {-1, 0};
-            break;
-        case Direction::Right:
-            dir = {1, 0};
-            break;
+    if (inputBuffer.empty()) {
+        switch (direction_) {
+            case Direction::Up:
+                dir = {0, -1};
+                break;
+            case Direction::Down:
+                dir = {0, 1};
+                break;
+            case Direction::Left:
+                dir = {-1, 0};
+                break;
+            case Direction::Right:
+                dir = {1, 0};
+                break;
+        }
+    }
+    else {
+        dir = inputBuffer.front();
+        inputBuffer.pop();
+
+        if      (dir.y == -1) { direction_ = Direction::Up; }
+        else if (dir.y ==  1) { direction_ = Direction::Down; }
+        else if (dir.x == -1) { direction_ = Direction::Left; }
+        else if (dir.x ==  1) { direction_ = Direction::Right; }
     }
 
     sf::Vector2i prevPos = body_[0].position_;
@@ -65,7 +75,22 @@ void Snake::Step() {
 }
 
 void Snake::Turn(Direction dir) {
-    direction_ = dir;
+    if (inputBuffer.size() > 3) { return; }
+
+    switch (dir) {
+        case Direction::Up:
+            inputBuffer.push({0, -1});
+            break;
+        case Direction::Down:
+            inputBuffer.push({0, 1});
+            break;
+        case Direction::Left:
+            inputBuffer.push({-1, 0});
+            break;
+        case Direction::Right:
+            inputBuffer.push({1, 0});
+            break;
+    }
 }
 
 int Snake::GetInterval() {
@@ -79,10 +104,8 @@ void Snake::SetInterval(int interval) {
 }
 
 void Snake::SpeedUp() {
-    int newInterval = std::max((int)std::ceil(std::pow(0.96, speed_ - 150)), 50);
-    std::cout << interval_ << " -> " << newInterval << std::endl;
+    interval_ = std::max((int)std::ceil(std::pow(0.96, speed_ - 150)), 50);
     speed_++;
-    interval_ = newInterval;
 }
 
 void Snake::Draw(sf::RenderWindow& window) {
