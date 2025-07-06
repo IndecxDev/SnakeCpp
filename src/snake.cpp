@@ -6,14 +6,39 @@
 #include "../include/settings.h"
 
 Snake::Snake(int startX, int startY, int startLength)
-    : direction_(Direction::Up), length_(startLength), speed_(-1) {
+    : direction_(Direction::Up), length_(startLength), speed_(-1), dead(false) {
     for (int i = 0; i < length_; i++) {
         sf::RectangleShape shape;
         int gridPosX = startX;
         int gridPosY = startY + i;
 
         shape.setFillColor(sf::Color::Green);
-        shape.setSize(sf::Vector2f(GRID_TILE_SIZE - SNAKE_TEXTURE_MARGIN, GRID_TILE_SIZE - SNAKE_TEXTURE_MARGIN));
+        shape.setSize(sf::Vector2f(GRID_TILE_SIZE - GRID_MARGIN, GRID_TILE_SIZE - GRID_MARGIN));
+
+        SnakeSegment seg;
+        seg.shape_ = shape;
+        seg.position_.x = gridPosX;
+        seg.position_.y = gridPosY;
+        body_.push_back(seg);
+    }
+    Snake::SpeedUp();
+    UpdateSegmentPositions();
+}
+
+void Snake::Reset(int startX, int startY, int startLength) {
+    direction_ = Direction::Up;
+    length_ = startLength;
+    dead = false;
+    speed_ = -1;
+    body_.clear();
+
+    for (int i = 0; i < length_; i++) {
+        sf::RectangleShape shape;
+        int gridPosX = startX;
+        int gridPosY = startY + i;
+
+        shape.setFillColor(sf::Color::Green);
+        shape.setSize(sf::Vector2f(GRID_TILE_SIZE - GRID_MARGIN, GRID_TILE_SIZE - GRID_MARGIN));
 
         SnakeSegment seg;
         seg.shape_ = shape;
@@ -31,7 +56,7 @@ void Snake::UpdateSegmentPositions() {
         if (seg.position_.y < 0) { seg.position_.y += GRID_HEIGHT; }
         if (seg.position_.x >= GRID_WIDTH) { seg.position_.x = 0; }
         if (seg.position_.y >= GRID_HEIGHT) { seg.position_.y = 0; }
-        seg.shape_.setPosition(seg.position_.x * GRID_TILE_SIZE + SNAKE_TEXTURE_MARGIN / 2, seg.position_.y * GRID_TILE_SIZE + SNAKE_TEXTURE_MARGIN / 2);
+        seg.shape_.setPosition(seg.position_.x * GRID_TILE_SIZE + GRID_MARGIN / 2, seg.position_.y * GRID_TILE_SIZE + GRID_MARGIN / 2);
     }
 }
 
@@ -71,6 +96,13 @@ void Snake::Step() {
         prevPos = currPos;
     }
 
+    for (int i = 1; i < body_.size(); i++) {
+        if (body_[i].position_ == body_[0].position_) {
+            dead = true;
+            break;
+        }
+    }
+
     UpdateSegmentPositions();
 }
 
@@ -104,7 +136,7 @@ void Snake::SetInterval(int interval) {
 }
 
 void Snake::SpeedUp() {
-    interval_ = std::max((int)std::ceil(std::pow(0.96, speed_ - 150)), 50);
+    interval_ = std::max((int)std::ceil(std::pow(0.96, speed_ - 150)), 50) / 2;
     speed_++;
 }
 

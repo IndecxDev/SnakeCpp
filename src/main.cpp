@@ -3,6 +3,7 @@
 
 #include "../include/settings.h"
 #include "../include/snake.h"
+#include "../include/food.h"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Window", sf::Style::Close);
@@ -12,9 +13,17 @@ int main() {
     int msSnakeTimer = 0;
     int msSnakeSpeedUpTimer = 0;
 
-    Snake snake{SNAKE_START_X, SNAKE_START_Y, SNAKE_START_LENGTH};
+    int msFoodSpawnTimer = 0;
+
+    Snake snake{SNAKE_START_X - 2, SNAKE_START_Y, SNAKE_START_LENGTH};
+    FoodGenerator foodGen{1000};
 
     while (window.isOpen()) {
+
+        if (snake.dead) {
+            snake.Reset(SNAKE_START_X - 2, SNAKE_START_Y, SNAKE_START_LENGTH);
+        }
+
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -23,25 +32,24 @@ int main() {
             if (event.type == sf::Event::KeyPressed) {
                 switch (event.key.code)
                 {
-                    case sf::Keyboard::Escape:
-                        window.close();
-                        break;
-                    case sf::Keyboard::Right:
-                        snake.Turn(Direction::Right);
-                        break;
-                    case sf::Keyboard::Left:
-                        snake.Turn(Direction::Left);
-                        break;
-                    case sf::Keyboard::Up:
-                        snake.Turn(Direction::Up);
-                        break;
-                    case sf::Keyboard::Down:
-                        snake.Turn(Direction::Down);
-                        break;
-                    default:
+                case sf::Keyboard::Escape:
+                    window.close();
                     break;
+                case sf::Keyboard::Right:
+                    snake.Turn(Direction::Right);
+                    break;
+                case sf::Keyboard::Left:
+                    snake.Turn(Direction::Left);
+                    break;
+                case sf::Keyboard::Up:
+                    snake.Turn(Direction::Up);
+                    break;
+                case sf::Keyboard::Down:
+                    snake.Turn(Direction::Down);
+                    break;
+                default:
+                break;
                 }
-                
             }
         }
 
@@ -50,6 +58,7 @@ int main() {
         int dt = clock.restart().asMilliseconds();
         msSnakeTimer += dt;
         msSnakeSpeedUpTimer += dt;
+        msFoodSpawnTimer += dt;
 
         if (msSnakeTimer >= snake.GetInterval()) {
             msSnakeTimer = 0;
@@ -61,7 +70,17 @@ int main() {
             snake.SpeedUp();
         }
 
+        if (msFoodSpawnTimer >= foodGen.GetInterval()) {
+            msFoodSpawnTimer = 0;
+            foodGen.SpawnFood();
+        }
+
         snake.Draw(window);
+        foodGen.Draw(window);
         window.display();
     }
+}
+
+void Reset() {
+
 }

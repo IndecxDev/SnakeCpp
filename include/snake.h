@@ -24,12 +24,15 @@ private:
     sf::Vector2i DirectionToVector(Direction dir);
     Direction VectorToDirection(sf::Vector2i v);
 public:
+    bool dead;
+
     Snake(int startX, int startY, int startLength);
     void Step();
     void Turn(Direction dir);
     int GetInterval();
     void SetInterval(int interval);
     void SpeedUp();
+    void Reset(int startX, int startY, int startLength);
     void Draw(sf::RenderWindow& window);
 };
 
