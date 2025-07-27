@@ -4,9 +4,16 @@
 
 #include "../include/snake.h"
 #include "../include/settings.h"
+#include "../include/food.h"
+#include "../include/arena.h"
 
-Snake::Snake(int startX, int startY, int startLength)
-    : direction_(Direction::Up), length_(startLength), speed_(-1), dead(false) {
+Snake::Snake(Arena* arena, int startX, int startY, int startLength)
+    : arena_(arena), 
+      direction_(Direction::Up), 
+      length_(startLength), 
+      speed_(-1), 
+      dead_(false)
+{
     for (int i = 0; i < length_; i++) {
         sf::RectangleShape shape;
         int gridPosX = startX;
@@ -28,7 +35,7 @@ Snake::Snake(int startX, int startY, int startLength)
 void Snake::Reset(int startX, int startY, int startLength) {
     direction_ = Direction::Up;
     length_ = startLength;
-    dead = false;
+    dead_ = false;
     speed_ = -1;
     body_.clear();
 
@@ -96,9 +103,9 @@ void Snake::Step() {
         prevPos = currPos;
     }
 
-    for (int i = 1; i < body_.size(); i++) {
+    for (size_t i = 1; i < body_.size(); i++) {
         if (body_[i].position_ == body_[0].position_) {
-            dead = true;
+            dead_ = true;
             break;
         }
     }

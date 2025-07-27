@@ -1,7 +1,10 @@
-#include <vector>
-
 #ifndef FOOD_H
 #define FOOD_H
+
+class Arena;
+
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 struct Food {
     sf::RectangleShape rect;
@@ -11,10 +14,11 @@ struct Food {
 
 class FoodGenerator {
 private:
+    Arena* arena_;
     std::vector<Food> foods_;
     int interval_;
 public:
-    FoodGenerator(int interval) : interval_(interval) {};
+    FoodGenerator(Arena* arena, int interval);
     int GetInterval();
     void SpawnFood();
     void Draw(sf::RenderWindow& window);

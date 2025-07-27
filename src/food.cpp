@@ -11,6 +11,9 @@ std::mt19937 rng{std::chrono::steady_clock::now().time_since_epoch().count()};
 std::uniform_int_distribution<int> randX{0, GRID_WIDTH - 1};
 std::uniform_int_distribution<int> randY{0, GRID_HEIGHT - 1};
 
+FoodGenerator::FoodGenerator(Arena* arena, int interval)
+    : arena_(arena), interval_(interval){}
+
 void FoodGenerator::SpawnFood() {
     Food f;
     f.position = {randX(rng), randY(rng)};

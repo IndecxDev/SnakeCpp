@@ -4,7 +4,7 @@
 inline constexpr int WINDOW_WIDTH            = 1000;
 inline constexpr int WINDOW_HEIGHT           = 1000;
 
-inline constexpr int GRID_TILE_SIZE          = 40;   // How big a grid tile is
+inline constexpr int GRID_TILE_SIZE          = 40;
 inline constexpr int GRID_WIDTH              = WINDOW_WIDTH / GRID_TILE_SIZE;
 inline constexpr int GRID_HEIGHT             = WINDOW_HEIGHT / GRID_TILE_SIZE;
 inline constexpr int GRID_MARGIN             = 4;

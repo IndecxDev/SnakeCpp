@@ -1,29 +1,16 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <SFML/Graphics.hpp>
 
 #include "../include/settings.h"
-#include "../include/snake.h"
-#include "../include/food.h"
+#include "../include/arena.h"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Window", sf::Style::Close);
     window.setFramerateLimit(60);
-    sf::Clock clock;
 
-    int msSnakeTimer = 0;
-    int msSnakeSpeedUpTimer = 0;
-
-    int msFoodSpawnTimer = 0;
-
-    Snake snake{SNAKE_START_X - 2, SNAKE_START_Y, SNAKE_START_LENGTH};
-    FoodGenerator foodGen{1000};
+    Arena arena = Arena(GRID_WIDTH, GRID_HEIGHT, &window);
 
     while (window.isOpen()) {
-
-        if (snake.dead) {
-            snake.Reset(SNAKE_START_X - 2, SNAKE_START_Y, SNAKE_START_LENGTH);
-        }
-
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -36,16 +23,16 @@ int main() {
                     window.close();
                     break;
                 case sf::Keyboard::Right:
-                    snake.Turn(Direction::Right);
+                    arena.Turn(Direction::Right);
                     break;
                 case sf::Keyboard::Left:
-                    snake.Turn(Direction::Left);
+                    arena.Turn(Direction::Left);
                     break;
                 case sf::Keyboard::Up:
-                    snake.Turn(Direction::Up);
+                    arena.Turn(Direction::Up);
                     break;
                 case sf::Keyboard::Down:
-                    snake.Turn(Direction::Down);
+                    arena.Turn(Direction::Down);
                     break;
                 default:
                 break;
@@ -53,30 +40,12 @@ int main() {
             }
         }
 
-        window.clear(sf::Color::Black);
+        arena.Tick();
         
-        int dt = clock.restart().asMilliseconds();
-        msSnakeTimer += dt;
-        msSnakeSpeedUpTimer += dt;
-        msFoodSpawnTimer += dt;
+        window.clear(sf::Color::Black);
 
-        if (msSnakeTimer >= snake.GetInterval()) {
-            msSnakeTimer = 0;
-            snake.Step();
-        }
+        arena.Draw();
 
-        if (msSnakeSpeedUpTimer >= SNAKE_SPEED_UP_INTERVAL) {
-            msSnakeSpeedUpTimer = 0;
-            snake.SpeedUp();
-        }
-
-        if (msFoodSpawnTimer >= foodGen.GetInterval()) {
-            msFoodSpawnTimer = 0;
-            foodGen.SpawnFood();
-        }
-
-        snake.Draw(window);
-        foodGen.Draw(window);
         window.display();
     }
 }
