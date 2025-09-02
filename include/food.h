@@ -20,7 +20,9 @@ private:
 public:
     FoodGenerator(Arena* arena, int interval);
     int GetInterval();
-    void SpawnFood();
+    sf::Vector2i SpawnFood();
+    std::vector<sf::Vector2i> GetFoodPositions();
+    void EatFood(sf::Vector2i pos);
     void Draw(sf::RenderWindow& window);
 };
 

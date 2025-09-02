@@ -8,10 +8,12 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+enum TileState { Empty, SnakeBody, Food };
+
 class Arena {
 private:
     sf::RenderWindow* window_;
-    std::vector<std::vector<bool>> tileOccupied_;
+    std::vector<std::vector<TileState>> tiles_;
     Snake* snake_;
     FoodGenerator* foodGen_;
 

@@ -36,8 +36,12 @@ public:
     int GetInterval();
     void SetInterval(int interval);
     void SpeedUp();
+    void Grow(sf::Vector2i newPos);
     void Reset(int startX, int startY, int startLength);
     void Draw(sf::RenderWindow& window);
+    std::vector<sf::Vector2i> GetBodyPositions();
+    sf::Vector2i GetFront();
+    sf::Vector2i GetBack();
 };
 
 #endif

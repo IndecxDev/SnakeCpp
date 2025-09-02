@@ -152,3 +152,36 @@ void Snake::Draw(sf::RenderWindow& window) {
         window.draw(seg.shape_);
     }
 }
+
+std::vector<sf::Vector2i> Snake::GetBodyPositions() {
+    std::vector<sf::Vector2i> bodyPos;
+    for (SnakeSegment& segment : body_) {
+        bodyPos.push_back(segment.position_);
+    }
+    return bodyPos;
+}
+
+sf::Vector2i Snake::GetFront() {
+    if (body_.size() == 0) { return sf::Vector2i{}; }
+    return body_[0].position_;
+}
+
+sf::Vector2i Snake::GetBack() {
+    if (body_.size() == 0) { return sf::Vector2i{}; }
+    return body_.back().position_;
+}
+
+void Snake::Grow(sf::Vector2i newPos) {
+    sf::RectangleShape shape;
+
+    shape.setFillColor(sf::Color::Green);
+    shape.setSize(sf::Vector2f(GRID_TILE_SIZE - GRID_MARGIN, GRID_TILE_SIZE - GRID_MARGIN));
+
+    SnakeSegment seg;
+    seg.shape_ = shape;
+    seg.position_ = newPos;
+    body_.push_back(seg);
+    length_++;
+
+    UpdateSegmentPositions();
+}

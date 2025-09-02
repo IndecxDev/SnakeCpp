@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -pedantic -std=c++20 $(MODE_FLAGS) -MMD -MP
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++23 $(MODE_FLAGS) -MMD -MP
 
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
